@@ -71,7 +71,27 @@ def make_post(event, context):
 			'poster_needs':needs,
 			'poster_offer':offer,
 			'post_time': str(int(time.time())),
-			'expiration_time':str(int(time.time())+604800)
+			'expiration_time':str(int(time.time())+604800),
+			'solved':False,
+		}
+	)
+
+def toggle_solved(event, context):
+	assert 'course_id' in event
+	assert 'post_id' in event
+	course_id = event['course_id']
+	post_id = event['post_id']
+
+	ptable = table_init('iris-labs-1-posts')
+	state = ptable.get_item(Key = {'course_id':course_id,'post_id':post_id})["Item"]['solved']
+	ptable.update_item(
+		Key = {
+			'course_id':course_id,
+			'post_id':post_id
+		},
+		UpdateExpression("SET solved = :s"),
+		ExpressionAttributeValues = {
+			":s":not state,
 		}
 	)
 
