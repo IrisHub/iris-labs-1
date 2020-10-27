@@ -12,7 +12,7 @@ def pprint_time(secs):
 		mins = secs // 60
 		return f"{mins}m"
 	if secs > 0:
-		return f"{secs} s"
+		return f"{secs}s"
 
 
 def table_init(table_name):
@@ -30,7 +30,7 @@ def user_init(utable, user_id, user_item = {}):
 def idgen():
 	return str(uuid.uuid4()).split('-')[-1]
 
-class_ids = {
+course_ids = {
     "MATH 1A": "d1bc38587429",
     "MATH 1B": "836ad5f34cb3",
     "ECON 1": "e58efbabe08e",
@@ -43,4 +43,4 @@ class_ids = {
     "EECS 16A": "386563c111a3"
 }
 
-class_lookup = {v:k for k,v in class_ids.items()}
+course_lookup = {v:k for k,v in class_ids.items()}
