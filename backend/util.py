@@ -1,6 +1,20 @@
 import boto3
 import uuid
 
+def pprint_time(secs):
+	if secs >= 86400:
+		days = secs//86400
+		return f"{days}d"
+	if secs >= 3600:
+		hours = secs // 3600
+		return f"{hours}h"
+	if secs >= 60:
+		mins = secs // 60
+		return f"{mins}m"
+	if secs > 0:
+		return f"{secs} s"
+
+
 def table_init(table_name):
 	# Grab the DynamoDB table based on table_name
 	dynamodb = boto3.resource('dynamodb')
@@ -14,7 +28,7 @@ def user_init(utable, user_id, user_item = {}):
 		)
 
 def idgen():
-	return str(uuid.uuid4()).split('-')[:-1]
+	return str(uuid.uuid4()).split('-')[-1]
 
 class_ids = {
     "MATH 1A": "d1bc38587429",
@@ -29,4 +43,4 @@ class_ids = {
     "EECS 16A": "386563c111a3"
 }
 
-class_lookup = {v:k for k:v in class_ids.items()}
+class_lookup = {v:k for k,v in class_ids.items()}
