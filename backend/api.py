@@ -56,7 +56,13 @@ def make_post(event, context):
 		}
 	)
 
+def get_user_classes(event, context):
+	assert 'user_id' in event
+	user_id = event['user_id']
 
+	utable = table_init('iris-labs-1-users')
+	user_classes = utable.get_item(Key={'user_id':user_id})["Item"]['classes']
+	return [class_lookup[c] for c in user_classes]
 
 def populate_feed(event, context):
 	assert 'user_id' in event
@@ -93,24 +99,25 @@ def populate_feed(event, context):
 
 	return all_posts
 
-# def __main__():
-# 	print(classes_list(None, None))
+def __main__():
+	print(classes_list(None, None))
 
-# 	classes = ['CHEM 1A', 'CHEM 3A', 'ECON 1', 'ECON 2']
-# 	user_id = 'testtesttest'
-# 	payload = {'user_id':user_id, 'classes':classes}
-# 	# auth(payload, None)
+	classes = ['CHEM 1A', 'CHEM 3A', 'ECON 1', 'ECON 2']
+	user_id = 'testtesttest'
+	payload = {'user_id':user_id, 'classes':classes}
+	# auth(payload, None)
 
-# 	post = {
-# 		'user_id':'testtesttest',
-# 		'needs':'wanna check 2b integral',
-# 		'offer':'can help w/ 3',
-# 		'class':'CHEM 1A'
-# 	}
-# 	# make_post(post, None)
+	post = {
+		'user_id':'testtesttest',
+		'needs':'wanna check 2b integral',
+		'offer':'can help w/ 3',
+		'class':'CHEM 1A'
+	}
+	# make_post(post, None)
 
-# 	payload = {'user_id':user_id}
-# 	print(json.dumps(populate_feed(payload, None), indent=4))
+	payload = {'user_id':user_id}
+	print(json.dumps(populate_feed(payload, None), indent=4))
+	print(get_user_classes(payload, None))
 
 
-# __main__()
+__main__()
