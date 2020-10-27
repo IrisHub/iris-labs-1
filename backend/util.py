@@ -1,4 +1,5 @@
 import boto3
+import uuid
 
 def table_init(table_name):
 	# Grab the DynamoDB table based on table_name
@@ -11,6 +12,9 @@ def user_init(utable, user_id, user_item = {}):
 		utable.put_item(
 			Item = user_item
 		)
+
+def idgen():
+	return str(uuid.uuid4()).split('-')[:-1]
 
 class_ids = {
     "MATH 1A": "d1bc38587429",

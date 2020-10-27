@@ -1,5 +1,9 @@
 from util import *
 import random
+import time
+from datetime import datetime
+from datetime import timedelta
+import humanize
 
 def classes_list(event, context):
 	return sorted(class_ids.keys())
@@ -23,6 +27,35 @@ def get_nickname():
 	names = ['Strada', 'Campanile', 'Haas', 'Soda', 'Glade', 'Moffitt', 'Doe', 'Croads', 'Le Conte', 'VLSB', 'Cory', 'North Gate', 'Mezzo', 'Milano', 'Victory Point', 'Brewed Awakening', 'Trock', '51B', 'Big C', 'Unit 3', 'Blackwell', 'Foothill', 'CREAM', 'Imm Thai', 'Chipotle', 'Evans']
 	return "Anonymous " + random.choice(names)
 
+def make_post(event, context):
+	assert 'user_id' in event
+	user_id = event['user_id']
+	needs = event['needs']
+	offer = event['offer']
+	class_ = event['class']
+
+	post_id = idgen()
+
+	utable = table_init('iris-labs-1-users')
+	ptable = table_init('iris-labs-1-posts')
+
+	user_info = utable.get_item(Key = {'user_id':user_id})['Item']
+	nickname = user_info['nickname']
+
+	ptable.put_item(
+		Item = {
+			'course_id':class_ids[class_],
+			'post_id':post_id,
+			'poster_nickname':nickname,
+			'poster_id':user_id,
+			'poster_needs':needs,
+			'poster_offer':offer,
+			'post_time': str(int(time.time()))
+		}
+	)
+
+
+
 def populate_feed(event, context):
 	assert 'user_id' in event
 	user_id = event['user_id']
@@ -42,6 +75,17 @@ def populate_feed(event, context):
 			continue
 	
 	if not all_posts:
-		return {}
+		return {
+		}
 
-	return None
+	all_posts = sorted(all_posts, key=lambda x: int(x['post_time']))[::-1]
+
+	now = datetime.now()
+	for post in all_posts:
+		post_time = datetime.fromtimestamp(int(post['post_time']))
+		diff = now - post_time
+		all_posts['post_time'] = humanize.naturaldelta(diff)
+
+	return all_posts
+
+
