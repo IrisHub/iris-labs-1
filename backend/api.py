@@ -6,7 +6,6 @@ from datetime import timedelta
 import humanize
 import json
 from boto3.dynamodb.conditions import Key
-from hatesonar import Sonar
 
 def courses_list(event, context):
 	return sorted([{'course_id':k, 'course_name':v} for k,v in course_lookup.items()], key = lambda x: x['course_name'])
@@ -44,14 +43,6 @@ def make_post(event, context):
 	needs = event['needs']
 	offer = event['offer']
 	course_id = event['course_id']
-
-	needs_hate = sonar.ping(needs)
-	offer_hate = sonar.ping(offer)
-	needs_hate['classes'] = {e['class_name']:e['confidence'] for e in needs_hate['classes']}
-	offer_hate['classes'] = {e['class_name']:e['confidence'] for e in offer_hate['classes']}
-	if needs_hate['classes']['hate_speech'] > 0.5 or offer_hate['classes']['hate_speech'] > 0.5:
-		flag_user({'user_id':user_id}, None)
-		return
 
 	post_id = idgen()
 
