@@ -39,7 +39,7 @@ def make_post(event, context):
 	user_id = event['user_id']
 	needs = event['needs']
 	offer = event['offer']
-	course_ = event['course']
+	course_id = event['course_id']
 
 	post_id = idgen()
 
@@ -53,7 +53,7 @@ def make_post(event, context):
 		},
 		UpdateExpression = "SET posts = list_append(posts, :s)",
 		ExpressionAttributeValues = {
-			":s": [course_ids[course_] + ":" + post_id]
+			":s": [course_id + ":" + post_id]
 		}
 	)
 	nickname = user_info['nickname']
@@ -61,7 +61,8 @@ def make_post(event, context):
 
 	ptable.put_item(
 		Item = {
-			'course_id':course_ids[course_],
+			'course_id':course_id,
+			'course_name':course_lookup[course_id]
 			'post_id':post_id,
 			'poster_nickname':nickname,
 			'poster_id':user_id,
@@ -131,6 +132,7 @@ def populate_feed(event, context):
 		diff = now - post_time
 		post['post_time'] = pprint_time(diff)
 		post['course_name'] = course_lookup[post['course_id']]
+		del post['expiration_time']
 
 	return all_posts
 
