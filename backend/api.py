@@ -142,6 +142,7 @@ def populate_feed(event, context):
 		post['post_time'] = pprint_time(diff)
 		post['course_name'] = course_lookup[post['course_id']]
 		del post['expiration_time']
+		del post['flags']
 
 	return all_posts
 
