@@ -61,4 +61,4 @@ rm -rf ./package
 
 git add *
 git commit -m "${DEPLOY} AWS Lambda function ${NAME}"
-git push origin master
+git push origin main
