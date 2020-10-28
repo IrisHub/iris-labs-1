@@ -69,8 +69,8 @@ def make_post(event, context):
 			'poster_phone':phone,
 			'poster_needs':needs,
 			'poster_offer':offer,
-			'post_time': str(int(time.time())),
-			'expiration_time':str(int(time.time())+604800),
+			'post_time': int(time.time()),
+			'expiration_time':int(time.time())+604800,
 			'solved':False,
 		}
 	)
