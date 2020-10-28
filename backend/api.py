@@ -89,7 +89,7 @@ def toggle_solved(event, context):
 			'course_id':course_id,
 			'post_id':post_id
 		},
-		UpdateExpression("SET solved = :s"),
+		UpdateExpression = "SET solved = :s",
 		ExpressionAttributeValues = {
 			":s":not state,
 		}
@@ -132,7 +132,7 @@ def populate_feed(event, context):
 		post_time = int(post['post_time'])
 		diff = now - post_time
 		post['post_time'] = pprint_time(diff)
-		post['course_id'] = course_lookup[post['course_id']]
+		post['course_name'] = course_lookup[post['course_id']]
 
 	return all_posts
 
@@ -140,7 +140,7 @@ def delete_user(event, context):
 	assert 'user_id' in event
 	user_id = event['user_id']
 
-	utable = table_init('iris-labs-1-posts')
+	utable = table_init('iris-labs-1-users')
 	user_info = utable.get_item(Key={'user_id':user_id})['Item']
 	for post in user_info['posts']:
 		course_id, post_id = post.split(':')
@@ -148,7 +148,7 @@ def delete_user(event, context):
 			'course_id':course_id,
 			'post_id':post_id
 		}
-		delete_posts(payload, None)
+		delete_post(payload, None)
 
 	utable.delete_item(
 		Key = {
@@ -156,7 +156,7 @@ def delete_user(event, context):
 		}
 	)
 
-def delete_posts(event, context):
+def delete_post(event, context):
 	assert 'course_id' in event
 	course_id = event['course_id']
 	assert 'post_id' in event
@@ -172,25 +172,47 @@ def delete_posts(event, context):
 	)
 
 
-def __main__():
-	print(courses_list(None, None))
+# def __main__():
+# 	print(courses_list(None, None))
 
-	courses = ['CHEM 1A', 'CHEM 3A', 'ECON 1', 'ECON 2']
-	user_id = 'testtesttest'
-	payload = {'user_id':user_id, 'courses':courses}
-	auth(payload, None)
+# 	courses = ['CHEM 1A', 'CHEM 3A', 'ECON 1', 'ECON 2']
+# 	user_id1 = 'sldkjfalksdjf;aj'
+# 	payload = {'user_id':user_id1, 'courses':courses, 'phone':'1234567889'}
+# 	auth(payload, None)
 
-	post = {
-		'user_id':'testtesttest',
-		'needs':'wanna check 2b integral',
-		'offer':'can help w/ 3',
-		'course':'CHEM 1A'
-	}
-	make_post(post, None)
+# 	courses = ['EECS 16A', 'CHEM 3A', 'ECON 1', 'ECON 2']
+# 	user_id = 'sdfsdfaj'
+# 	payload = {'user_id':user_id, 'courses':courses, 'phone':'1234567889'}
+# 	auth(payload, None)
 
-	payload = {'user_id':user_id}
-	print(json.dumps(populate_feed(payload, None), indent=4))
-	print(get_user_courses(payload, None))
+# 	post = {
+# 		'user_id':user_id1,
+# 		'needs':'check 2B',
+# 		'offer':'can help w/ 3',
+# 		'course':'CHEM 1A'
+# 	}
+# 	make_post(post, None)
+
+# 	post = {
+# 		'user_id':user_id,
+# 		'needs':'wanna check 2b integral',
+# 		'offer':'can help w/ 3',
+# 		'course':'EECS 16A'
+# 	}
+# 	make_post(post, None)
+	
+# 	print(get_user_courses(payload, None))
+
+# 	payload = {
+# 		'course_id':'ecf8dc1335d8',
+# 		'post_id':'02c6a46de612'
+# 	}
+# 	toggle_solved(payload, None)
+
+# 	payload = {'user_id':user_id1}
+# 	print(json.dumps(populate_feed(payload, None), indent=4))
+
+# 	delete_user(payload, None)
 
 
-__main__()
+# __main__()

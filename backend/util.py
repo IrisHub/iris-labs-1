@@ -43,4 +43,4 @@ course_ids = {
     "EECS 16A": "386563c111a3"
 }
 
-course_lookup = {v:k for k,v in class_ids.items()}
+course_lookup = {v:k for k,v in course_ids.items()}
