@@ -25,6 +25,8 @@ def auth(event, context):
 		"courses":courses,
 		"posts":[],
 		"phone":phone,
+		"flags":0,
+		"banned":False,
 	}
 	user_init(utable, user_id, user_item = user_item)
 
@@ -72,6 +74,7 @@ def make_post(event, context):
 			'post_time': int(time.time()),
 			'expiration_time':int(time.time())+604800,
 			'solved':False,
+			'flags':0,
 		}
 	)
 
@@ -106,7 +109,13 @@ def populate_feed(event, context):
 	assert 'user_id' in event
 	user_id = event['user_id']
 	utable = table_init('iris-labs-1-users')
-	user_courses = utable.get_item(Key={'user_id':user_id})["Item"]['courses']
+
+	user_info = utable.get_item(Key={'user_id':user_id})["Item"]
+
+	if user_info['banned']:
+		return {}
+
+	user_courses = user_info['courses']
 	# user_courses = [course_lookup[e] for e in user_courses]
 
 	ptable = table_init('iris-labs-1-posts')
@@ -137,6 +146,14 @@ def populate_feed(event, context):
 	return all_posts
 
 def delete_user(event, context):
+	delete_user_posts(event, context)
+	utable.delete_item(
+		Key = {
+			'user_id':user_id,
+		}
+	)
+
+def delete_user_posts(event, context):
 	assert 'user_id' in event
 	user_id = event['user_id']
 
@@ -150,11 +167,19 @@ def delete_user(event, context):
 		}
 		delete_post(payload, None)
 
-	utable.delete_item(
-		Key = {
-			'user_id':user_id,
+def ban_user(event, context):
+	assert 'user_id' in event
+	user_id = event['user_id']
+	delete_user_posts(event, context)
+	utable = table_init('iris-labs-1-users')
+	utable.update_item(
+		Key = {'user_id':user_id},
+		UpdateExpression = "SET banned = :v",
+		ExpressionAttributeValues = {
+			":v":True
 		}
 	)
+
 
 def delete_post(event, context):
 	assert 'course_id' in event
@@ -163,14 +188,66 @@ def delete_post(event, context):
 	post_id = event['post_id']
 
 	ptable = table_init('iris-labs-1-posts')
+	try:
+		ptable.delete_item(
+			Key = {
+				'course_id':course_id,
+				'post_id':post_id,
+			}
+		)
+	except:
+		pass
 
-	ptable.delete_item(
-		Key = {
-			'course_id':course_id,
-			'post_id':post_id,
+def flag_post(event, context):
+	assert 'course_id' in event
+	course_id = event['course_id']
+	assert 'post_id' in event
+	post_id = event['post_id']
+
+	ptable = table_init('iris-labs-1-posts')
+
+	payload = {
+		'course_id':course_id,
+		'post_id':post_id,
+	}
+
+	ptable.update_item(
+		Key = payload,
+		UpdateExpression = "ADD flags :i",
+		ExpressionAttributeValues = {
+			":i": 1,
 		}
 	)
 
+	item_info = ptable.get_item(
+		Key = payload,
+	)['Item']
+
+	flags = item_info['flags']
+	poster = item_info['poster_id']
+
+	if flags >= 3:
+		flag_user({'user_id':poster}, None)
+		delete_post(payload, None)
+
+def flag_user(event, context):
+	assert 'user_id' in event
+	user_id = event['user_id']
+
+	utable = table_init('iris-labs-1-users')
+	utable.update_item(
+		Key = {
+			'user_id':user_id,
+		},
+		UpdateExpression = "ADD flags :i"
+	)
+
+	item_info = utable.get_item(
+		Key = {'user_id':user_id},
+	)['Item']
+
+	if item_info['flags'] >= 3:
+		ban_user(event, context)
 
 # def __main__():
 # 	print(courses_list(None, None))
