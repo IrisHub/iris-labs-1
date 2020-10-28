@@ -8,7 +8,7 @@ import json
 from boto3.dynamodb.conditions import Key
 
 def courses_list(event, context):
-	return sorted(course_ids.keys())
+	return sorted([{'course_id':k, 'course_name':v} for k,v in course_lookup.items()], key = lambda x: x['course_name'])
 
 def auth(event, context):
 	assert 'user_id' in event
