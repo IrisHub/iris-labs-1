@@ -28,8 +28,6 @@ def auth(event, context):
 	}
 	user_init(utable, user_id, user_item = user_item)
 
-	return user_id
-
 
 def get_nickname():
 	names = ['Strada', 'Campanile', 'Haas', 'Soda', 'Glade', 'Moffitt', 'Doe', 'Croads', 'Le Conte', 'VLSB', 'Cory', 'North Gate', 'Mezzo', 'Milano', 'Victory Point', 'Brewed Awakening', 'Trock', '51B', 'Big C', 'Unit 3', 'Blackwell', 'Foothill', 'CREAM', 'Imm Thai', 'Chipotle', 'Evans']
@@ -101,7 +99,7 @@ def get_user_courses(event, context):
 
 	utable = table_init('iris-labs-1-users')
 	user_courses = utable.get_item(Key={'user_id':user_id})["Item"]['courses']
-	return [course_lookup[c] for c in user_courses]
+	return sorted([{'course_id':c, 'course_name':course_lookup[c]} for c in user_courses], key=lambda x: x['course_name'])
 
 def populate_feed(event, context):
 	assert 'user_id' in event
