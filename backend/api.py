@@ -17,7 +17,6 @@ def auth(event, context):
 	user_id = event['user_id']
 	courses = event['courses']
 	phone = event['phone']
-	courses = [course_ids[e] for e in courses]
 	utable = table_init('iris-labs-1-users')
 	user_item = {
 		"user_id":user_id,
@@ -65,7 +64,7 @@ def make_post(event, context):
 	ptable.put_item(
 		Item = {
 			'course_id':course_id,
-			'course_name':course_lookup[course_id]
+			'course_name':course_lookup[course_id],
 			'post_id':post_id,
 			'poster_nickname':nickname,
 			'poster_id':user_id,
