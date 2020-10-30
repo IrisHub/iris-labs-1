@@ -32,11 +32,11 @@ def auth(event, context):
 
 def get_nickname():
 	names = ['Strada', 'Campanile', 'Haas', 'Soda', 'Glade', 'Moffitt', 'Doe', 'Croads', 'Le Conte', 'VLSB', 'Cory', 'North Gate', 'Mezzo', 'Milano', 'Victory Point', 'Brewed Awakening', 'Trock', '51B', 'Big C', 'Unit 3', 'Blackwell', 'Foothill', 'CREAM', 'Imm Thai', 'Chipotle', 'Evans']
-	return "Anonymous " + random.choice(names)
+	name = "Anon " + random.choice(names)
+	return name.upper()
 
 #TODO add post to list of posts in user table for deletion purposes
 def make_post(event, context):
-	sonar = Sonar()
 	assert 'user_id' in event
 	user_id = event['user_id']
 	needs = event['needs']
@@ -135,12 +135,15 @@ def populate_feed(event, context):
 
 	all_posts = sorted(all_posts, key=lambda x: int(x['post_time']))[::-1]
 
+	f = lambda s: s[:1].lower() + s[1:] if s else ''
 	now = int(time.time())
 	for post in all_posts:
 		post_time = int(post['post_time'])
 		diff = now - post_time
 		post['post_time'] = pprint_time(diff)
 		post['course_name'] = course_lookup[post['course_id']]
+		post['poster_offer'] = "Send " + f(post['poster_offer'])
+		post['poster_needs'] = "Can send " + f(post['poster_needs'])
 		del post['expiration_time']
 		del post['flags']
 
