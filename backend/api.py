@@ -29,7 +29,6 @@ def auth(event, context):
 	}
 	user_init(utable, user_id, user_item = user_item)
 
-
 def get_nickname():
 	names = ['Strada', 'Campanile', 'Haas', 'Soda', 'Glade', 'Moffitt', 'Doe', 'Croads', 'Le Conte', 'VLSB', 'Cory', 'North Gate', 'Mezzo', 'Milano', 'Victory Point', 'Brewed Awakening', 'Trock', '51B', 'Big C', 'Unit 3', 'Blackwell', 'Foothill', 'CREAM', 'Imm Thai', 'Chipotle', 'Evans']
 	name = "Anon " + random.choice(names)
@@ -142,8 +141,8 @@ def populate_feed(event, context):
 		diff = now - post_time
 		post['post_time'] = pprint_time(diff)
 		post['course_name'] = course_lookup[post['course_id']]
-		post['poster_offer'] = "Send " + f(post['poster_offer'])
-		post['poster_needs'] = "Can send " + f(post['poster_needs'])
+		post['poster_offer'] = "Can send " + f(post['poster_offer'])
+		post['poster_needs'] = "Send me " + f(post['poster_needs'])
 		post['poster_image'] = "https://iris-labs-1.s3-us-west-1.amazonaws.com/profile.png"
 		del post['expiration_time']
 		del post['flags']
@@ -244,7 +243,10 @@ def flag_user(event, context):
 		Key = {
 			'user_id':user_id,
 		},
-		UpdateExpression = "ADD flags :i"
+		UpdateExpression = "ADD flags :i",
+		ExpressionAttributeValues = {
+			":i": 1,
+		}
 	)
 
 	item_info = utable.get_item(
