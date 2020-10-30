@@ -4,15 +4,17 @@ import uuid
 def pprint_time(secs):
 	if secs >= 86400:
 		days = secs//86400
-		return f"{days}d"
+		return f"{days}D"
 	if secs >= 3600:
 		hours = secs // 3600
-		return f"{hours}h"
+		return f"{hours}H"
 	if secs >= 60:
 		mins = secs // 60
-		return f"{mins}m"
+		return f"{mins}M"
 	if secs > 0:
-		return f"{secs}s"
+		return f"{secs}S"
+	else:
+		return f"JUST NOW"
 
 
 def table_init(table_name):

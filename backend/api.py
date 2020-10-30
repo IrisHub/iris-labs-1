@@ -144,6 +144,7 @@ def populate_feed(event, context):
 		post['course_name'] = course_lookup[post['course_id']]
 		post['poster_offer'] = "Send " + f(post['poster_offer'])
 		post['poster_needs'] = "Can send " + f(post['poster_needs'])
+		post['poster_image'] = "https://iris-labs-1.s3-us-west-1.amazonaws.com/profile.png"
 		del post['expiration_time']
 		del post['flags']
 
