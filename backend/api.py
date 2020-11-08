@@ -63,7 +63,7 @@ def make_post(event, context):
 	ptable.put_item(
 		Item = {
 			'course_id':course_id,
-			'course_name':course_lookup[course_id],
+			'course_name':course_lookup_short[course_id],
 			'post_id':post_id,
 			'poster_nickname':nickname,
 			'poster_id':user_id,
@@ -102,7 +102,7 @@ def get_user_courses(event, context):
 
 	utable = table_init('iris-labs-1-users')
 	user_courses = utable.get_item(Key={'user_id':user_id})["Item"]['courses']
-	return sorted([{'course_id':c, 'course_name':course_lookup[c]} for c in user_courses], key=lambda x: x['course_name'])
+	return sorted([{'course_id':c, 'course_name':course_lookup_short[c]} for c in user_courses], key=lambda x: x['course_name'])
 
 def populate_feed(event, context):
 	assert 'user_id' in event
@@ -140,7 +140,7 @@ def populate_feed(event, context):
 		post_time = int(post['post_time'])
 		diff = now - post_time
 		post['post_time'] = pprint_time(diff)
-		post['course_name'] = course_lookup[post['course_id']]
+		post['course_name'] = course_lookup_short[post['course_id']]
 		post['poster_offer'] = "Can send " + f(post['poster_offer'])
 		post['poster_needs'] = "Send me " + f(post['poster_needs'])
 		post['poster_image'] = "https://iris-labs-1.s3-us-west-1.amazonaws.com/profile.png"

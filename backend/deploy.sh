@@ -55,9 +55,12 @@ fi
 if [ "${DEPLOY}" = update ]
 then
     aws lambda update-function-code --function-name "${NAME}" --zip-file fileb://function.zip
+    rm function.zip
+    rm -rf package
 fi
-rm ./function.zip
-rm -rf ./package
+# sudo rm "./function.zip"
+# sudo rm -rf "./package/"
+EXIT 1
 
 # git add *
 # git commit -m "${DEPLOY} AWS Lambda function ${NAME}"
